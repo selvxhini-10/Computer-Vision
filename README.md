@@ -1,10 +1,11 @@
 # OpenProject CV Workshop
 
-This repository contains materials for an online workshop focusing on computer vision tasks with MediaPipe.
+This repository contains materials for an online workshop focusing on image segmentation tasks with MediaPipe.
 
 ## Prerequisites
 
-- Python 3.x
+- Python: version 3.9 - 3.12
+- PIP: version 20.3+
 - Streamlit
 - OpenCV, NumPy, etc.
 
