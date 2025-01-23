@@ -8,40 +8,32 @@ import os
 import urllib.request
 import base64
 
-# -------------------
-# Setup and Configuration
-# -------------------
-
 st.title("🖼️ Image Segmenter with MediaPipe")
 
 st.markdown("""
 This application allows you to upload an image, performs image segmentation using MediaPipe's DeepLab v3 model, and displays the segmentation masks and background-blurred images.
 """)
 
-# Download the DeepLab v3 model if not present
+# Download the segmentation model if not present
 MODEL_URL = "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplab_v3/float32/1/deeplab_v3.tflite"
-MODEL_PATH = "deeplabv3.tflite"
+MODEL_PATH = "models/deeplabv3.tflite"
 
 @st.cache_resource
 def download_model():
     if not os.path.exists(MODEL_PATH):
-        st.info("Downloading DeepLab v3 model...")
+        st.info("Downloading Model...")
         urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
         st.success("Model downloaded successfully!")
     else:
-        st.info("DeepLab v3 model already exists.")
+        st.info("Model already exists.")
 
 download_model()
 
-# -------------------
-# Helper Functions
-# -------------------
-
 def load_image(image_file):
-    image = Image.open(image_file).convert("RGB")
+    image = Image.open(image_file)
     return np.array(image)
 
-def resize_image(image, desired_height=480, desired_width=480):
+def resize_image(image, desired_height=1000, desired_width=1000):
     h, w = image.shape[:2]
     if h < w:
         img = cv2.resize(image, (desired_width, int(h / (w / desired_width))))
@@ -93,10 +85,6 @@ def get_image_download_link(img_array, filename):
     href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">Download {filename}</a>'
     return href
 
-# -------------------
-# Streamlit Interface
-# -------------------
-
 # File uploader
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
@@ -104,26 +92,25 @@ if uploaded_file is not None:
     try:
         # Load and display original image
         image = load_image(uploaded_file)
-        image_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        resized_image = resize_image(image_bgr)
-        st.image(resized_image, caption='Uploaded Image', use_column_width=True)
+        resized_image = resize_image(image)
+        st.image(resized_image, caption='Uploaded Image', use_container_width=True)
 
         # Perform segmentation
         with st.spinner('Performing image segmentation...'):
-            category_mask = segment_image(image_bgr)
+            category_mask = segment_image(image)
 
         # Display segmentation mask
-        mask_image = apply_mask(image_bgr, category_mask, threshold=0.2)
+        mask_image = apply_mask(image, category_mask, threshold=0.2)
         mask_image_rgb = cv2.cvtColor(mask_image, cv2.COLOR_BGR2RGB)
         resized_mask = resize_image(mask_image_rgb)
-        st.image(resized_mask, caption='Segmentation Mask', use_column_width=True)
+        st.image(resized_mask, caption='Segmentation Mask', use_container_width=True)
 
         # Apply and display background blur
-        image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         blurred_image = apply_background_blur(image_rgb, category_mask, threshold=0.1)
         blurred_image_bgr = cv2.cvtColor(blurred_image, cv2.COLOR_RGB2BGR)
         resized_blurred = resize_image(blurred_image_bgr)
-        st.image(resized_blurred, caption='Blurred Background Image', use_column_width=True)
+        st.image(resized_blurred, caption='Blurred Background Image', use_container_width=True)
 
         # Provide download links
         st.markdown(get_image_download_link(mask_image_rgb, "segmentation_mask.png"), unsafe_allow_html=True)
