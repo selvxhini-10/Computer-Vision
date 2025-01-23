@@ -18,8 +18,12 @@ This application allows you to upload an image, performs image segmentation usin
 MODEL_URL = "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplab_v3/float32/1/deeplab_v3.tflite"
 MODEL_PATH = "models/deeplabv3.tflite"
 
+
+
 @st.cache_resource
 def download_model():
+    if not os.path.exists("models"):
+        os.makedirs("models")
     if not os.path.exists(MODEL_PATH):
         st.info("Downloading Model...")
         urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
