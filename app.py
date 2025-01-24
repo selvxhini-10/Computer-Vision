@@ -11,7 +11,7 @@ import base64
 st.title("🖼️ Image Segmenter with MediaPipe")
 
 st.markdown("""
-This application allows you to upload an image, performs image segmentation using MediaPipe's DeepLab v3 model, and displays the segmentation masks and background-blurred images.
+This application allows you to upload an image, performs image segmentation using MediaPipe's DeepLab v3 model (or any other model), and displays the segmentation masks and background-blurred images.
 """)
 
 # Download the segmentation model if not present

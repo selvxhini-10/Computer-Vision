@@ -4,7 +4,7 @@ This repository contains materials for an online workshop focusing on image segm
 
 ## Prerequisites
 
-- Python: version 3.9 - 3.12
+- Python: version 3.9 - 3.13
 - PIP: version 20.3+
 - Streamlit
 - OpenCV, NumPy, etc.
