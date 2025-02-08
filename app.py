@@ -1,4 +1,5 @@
 import streamlit as st
+from PIL import Image
 import numpy as np
 import cv2
 from PIL import Image
@@ -8,7 +9,34 @@ import os
 import urllib.request
 import base64
 
-st.title("🖼️ Image Segmenter with MediaPipe")
+import streamlit as st
+st.set_page_config(layout="wide")
+# Custom HTML/CSS for the banner
+custom_html = """
+<div class="banner">
+    <img src="https://img.pikbest.com/backgrounds/20200504/technology-blue-minimalist-banner-background_2754199.jpg!bwr800" alt="Banner Image">
+</div>
+<style>
+    .banner {
+        width: 160%;
+        height: 200px;
+        overflow: hidden;
+    }
+    .banner img {
+        width: 100%;
+        object-fit: cover;
+    }
+</style>
+"""
+# Display the custom HTML
+st.components.v1.html(custom_html)
+
+# Sidebar content
+st.sidebar.header("Sidebar Title")
+st.sidebar.subheader("Subheading")
+st.sidebar.text("Sidebar content goes here.")
+
+st.title("Image Segmenter with MediaPipe")
 
 st.markdown("""
 This application allows you to upload an image, performs image segmentation using MediaPipe's DeepLab v3 model (or any other model), and displays the segmentation masks and background-blurred images.
@@ -17,7 +45,6 @@ This application allows you to upload an image, performs image segmentation usin
 # Download the segmentation model if not present
 MODEL_URL = "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplab_v3/float32/1/deeplab_v3.tflite"
 MODEL_PATH = "models/deeplabv3.tflite"
-
 
 
 @st.cache_resource
@@ -89,13 +116,24 @@ def get_image_download_link(img_array, filename):
     href = f'<a href="data:image/png;base64,{encoded}" download="{filename}">Download {filename}</a>'
     return href
 
-# File uploader
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+# 📷 **Camera Input**
+captured_image = st.camera_input("Take a picture")
 
-if uploaded_file is not None:
+# 📤 **File Upload**
+uploaded_file = st.file_uploader("Or upload an image...", type=["jpg", "jpeg", "png"])
+
+# **Ensure only one source is used**
+if captured_image:
+    image_source = captured_image
+elif uploaded_file:
+    image_source = uploaded_file
+else:
+    image_source = None
+
+if image_source is not None:
     try:
         # Load and display original image
-        image = load_image(uploaded_file)
+        image = load_image(image_source)
         resized_image = resize_image(image)
         st.image(resized_image, caption='Uploaded Image', use_container_width=True)
 
@@ -122,3 +160,5 @@ if uploaded_file is not None:
 
     except Exception as e:
         st.error(f"An error occurred: {e}")
+
+
