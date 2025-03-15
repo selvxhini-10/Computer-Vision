@@ -26,14 +26,74 @@ custom_html = """
 
 # Display the custom HTML
 st.components.v1.html(custom_html)
+import streamlit as st
+from streamlit_option_menu import option_menu
+
+# Inject CSS to change the font
+st.markdown(
+    """
+    <style>
+        /* Change font for sidebar */
+        .css-1d391kg, .css-1v3fvcr {  /* Adjusts sidebar text */
+            font-family: 'Source Sans Pro', sans-serif !important;
+        }
+        [data-testid="stSidebarNav"] {display: none;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Sidebar Menu 
+with st.sidebar:
+    st.title("Main Menu")  
+
+    with st.expander("📑 APPS", True):
+        # Define checkbox options
+        item1 = st.checkbox("Home")
+        item2 = st.checkbox("About Me")
+        item3 = st.checkbox("Goals")
+
+        # Handle navigation when checkbox is selected
+        if item1:
+            st.switch_page("🏠_Home.py")  # Replace with actual page path
+        if item2:
+            st.switch_page("pages/computer_vision.py")
+        if item3:
+            st.switch_page("pages/nlp.py")
+
+    with st.expander("🤖 PROJECTS", True):
+        # Define checkbox options
+        item4 = st.checkbox("Pneumonia Classifier")
+        item5 = st.checkbox("Item 5 - how are yoou")
+        item6 = st.checkbox("Item 6 - testing")
+
+        # Handle navigation when checkbox is selected
+        if item4:
+            st.switch_page("pages/projects.py") 
+
+        if item5:
+            st.switch_page("pages/computer_vision.py")
+        if item6:
+            st.switch_page("pages/nlp.py")
+
+    # Custom CSS for Indentation
+    st.markdown("""
+        <style>
+        [data-testid="stMarkdownContainer"] ul{
+             padding-left: 20px !important;
+        }
+        .stCheckbox > label { 
+            margin-left: 15px !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
 st.sidebar.header("Applications of Image Segmentation")
 st.sidebar.text("Image Segmentation is used in a variety of industries, including healthcare, retail, automotive, agriculture and astronomy.")
 
-st.title("Computer Vision Projects")
+st.title("Pneumonia Classifier")
 
-st.header("Pneumonia Classifier")
-st.write("Upload a chest X-ray image, and the model will predict whether it shows signs of pneumonia.")
+st.write("This AI-powered pneumonia classifier analyzes chest X-ray images to detect signs of pneumonia. Using deep learning, the model distinguishes between normal and pneumonia-affected lungs, providing quick and reliable results to support medical diagnosis. Upload a chest X-ray image, and the model will predict whether it shows signs of pneumonia.")
 
 import glob
 # Load images from directory
@@ -52,7 +112,7 @@ def load_images():
 image_files, manuscripts = load_images()
 
 # Dropdown for users to select manuscripts
-view_manuscripts = st.multiselect("Feel Free to Select and Download Normal and Pneumonia X-ray Images", manuscripts)
+view_manuscripts = st.multiselect("Try testing the model! Feel free to select and download normal and pneumonia X-ray images.", manuscripts)
 n = 4;
 # Display images from the selected manuscript folders
 view_images = []
@@ -103,7 +163,7 @@ else:
 
 # resizing the image to be at least 224x224 and then cropping from the center
 size = (224, 224)
-image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+image = ImageOps.fit(Image, size, Image.Resampling.LANCZOS)
 
 # turn the image into a numpy array
 image_array = np.asarray(image)
@@ -142,3 +202,5 @@ with st.expander("Was the AI model's prediction correct?"):
         st.write("Your response is noted :)")
     else:
         st.write("We will work on improving the accuracy of the model.")
+
+# Waste Classification System

@@ -9,8 +9,7 @@ import os
 import urllib.request
 import base64
 
-import streamlit as st
-st.set_page_config(page_title="Home",  page_icon="🏠", layout="wide")
+st.set_page_config(page_title="Home", page_icon="🏠", layout="wide")
 
 # Custom HTML/CSS for the banner
 custom_html = """
@@ -31,7 +30,87 @@ custom_html = """
 """
 # Display the custom HTML
 st.components.v1.html(custom_html)
+import streamlit as st
+from streamlit_option_menu import option_menu
 
+# Inject CSS to change the font
+st.markdown(
+    """
+    <style>
+        /* Change font for sidebar */
+        .css-1d391kg, .css-1v3fvcr {  /* Adjusts sidebar text */
+            font-family: 'Source Sans Pro', sans-serif !important;
+        }
+        [data-testid="stSidebarNav"] {display: none;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Sidebar Menu 
+with st.sidebar:
+    st.title("Main Menu")  
+
+    with st.expander("📑 APPS", True):
+        # Define checkbox options
+        item1 = st.checkbox("Home")
+        item2 = st.checkbox("About Me")
+        item3 = st.checkbox("Goals")
+
+        # Handle navigation when checkbox is selected
+        if item1:
+            st.switch_page("🏠_Home.py")  # Replace with actual page path
+        if item2:
+            st.switch_page("pages/computer_vision.py")
+        if item3:
+            st.switch_page("pages/nlp.py")
+
+    with st.expander("🤖 PROJECTS", True):
+        # Define checkbox options
+        item4 = st.checkbox("Pneumonia Classifier")
+        item5 = st.checkbox("Item 5 - how are yoou")
+        item6 = st.checkbox("Item 6 - testing")
+
+        # Handle navigation when checkbox is selected
+        if item4:
+            st.switch_page("pages/projects.py") 
+
+        if item5:
+            st.switch_page("pages/computer_vision.py")
+        if item6:
+            st.switch_page("pages/nlp.py")
+
+    # Custom CSS for Indentation
+    st.markdown("""
+        <style>
+        [data-testid="stMarkdownContainer"] ul{
+             padding-left: 20px !important;
+        }
+        .stCheckbox > label { 
+            margin-left: 15px !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+# Sidebar Menu [deprecated]
+with st.sidebar:
+    selected = option_menu(
+        "Projects", 
+        ["Healthcare", "Waste", "Traffic"],
+        icons=["lungs", "trash", "stoplights"],
+        menu_icon="journal-bookmark",
+        default_index=0
+    )
+
+    if selected == "Home":
+        st.title("🏠 Home Page")
+        st.write("Welcome to the home page!")
+    
+    elif selected == "Projects":
+        st.title("📂 Projects")
+        st.write("Here are some projects.")
+        
+         
 # Sidebar content
 st.sidebar.header("What is Image Segmentation?")
 st.sidebar.text("Image Segmentation is a computer vision technique that seperates a digital image into discrete groups of pixels or image segments for object detection and processing. It aims to simplify an image to make it more meaningful for further analysis.")
@@ -173,5 +252,4 @@ if image_source is not None:
 
     except Exception as e:
         st.error(f"An error occurred: {e}")
-
 
